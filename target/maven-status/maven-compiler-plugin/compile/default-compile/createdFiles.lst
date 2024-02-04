@@ -1,0 +1,4 @@
+org\example\javaweb_inl2\JAXRSConfiguration.class
+servlets\StudentServlet.class
+servlets\CreateStudentServlet.class
+org\example\javaweb_inl2\resources\JavaEE8Resource.class
