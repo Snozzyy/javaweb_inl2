@@ -18,12 +18,21 @@ public class StudentServlet extends HttpServlet {
     String htmlTop = // Top part of html-code
             "<!DOCTYPE html>" +
             "<head>" +
-            "<title>Students</title>" +
-            "<link rel=\"stylesheet\" href=\"style.css\">" +
+            "<title>Show students</title>" +
+            "<link rel=\"stylesheet\" href=\"css/style.css\">" +
+            "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">" +
+            "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>" +
+            "<link href=\"https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap\" rel=\"stylesheet\">" +
+            "<link href=\"https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@100&display=swap\" rel=\"stylesheet\"> " +
             "</head>" +
-            "<body>";
-
-    String navbar;
+            "<body>" +
+            "<nav class=\"navbar\">" +
+            "<a href=\"../\">Home</a>" +
+            "<a href=\"/students\" id=\"active\">Students</a>" +
+            "<a href=\"/createstudent\">Create student</a>" +
+            "<a href=\"/createcourse\">Create course</a>" +
+            "<a href=\"/assign\">Assign to course</a>" +
+            "</nav>";
 
     String htmlBottom = // Bottom part of html-code
             "</body>" +
@@ -36,7 +45,9 @@ public class StudentServlet extends HttpServlet {
         String city;
         String interests;
 
-        String studentsTable = "<table>" + // Table part of html-code
+        String studentsTable =
+                "<div class=\"tables\">" +
+                "<table>" + // Table part of html-code
                 "<tr>" +
                 "<th>First name</th>" +
                 "<th>Last name</th>" +
@@ -72,14 +83,14 @@ public class StudentServlet extends HttpServlet {
             System.out.println(e);
         }
 
-        studentsTable += "</table><br>"; // Close table
+        studentsTable += "</table><br></div>"; // Close table
 
         String htmlForm = // Form part of html-code
                 "<form action=\"/students\" method=\"post\">" +
                     "<label for=\"fname\">First name:</label><br>" +
-                    "<input type=\"text\" id=\"fname\" name=\"fname\"><br>" +
+                    "<input type=\"text\" id=\"fname\" name=\"fname\" required><br>" +
                     "<label for=\"lname\">Last name:</label><br>" +
-                    "<input type=\"text\" id=\"lname\" name=\"lname\"><br><br>" +
+                    "<input type=\"text\" id=\"lname\" name=\"lname\" required><br><br>" +
                     "<input type=\"submit\" value=\"Submit\"><br>" +
                 "</form>";
 
@@ -92,21 +103,23 @@ public class StudentServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // TODO
         //  - Vid fel visa ett meddelande som beskriver problemet
-        //  - Fixa variabler för DB-info (user, pass, port, osv) - ALLA KLASSER
 
         String fname = req.getParameter("fname");
         String lname = req.getParameter("lname");
         String course;
         String courseTable =
+                "<div class=tables>" +
                 "<table>" +
                 "<tr>" +
                 "<th>First name</th>" +
                 "<th>Last name</th>" +
                 "<th>Courses</th>" +
                 "</tr>";
-        String backButton = "<form action=\"/students\" method=\"get\">" +
-                "<input type=\"submit\" value=\"Go Back\"><br>" +
-                "</form>";
+
+        String backButton =
+                "<a href=\"/students\">" +
+                "<button>Go back</button>" +
+                "</a>";
 
         String sql = "SELECT c.name AS course_name " +
                 "FROM students = s " +
@@ -116,6 +129,9 @@ public class StudentServlet extends HttpServlet {
                 "ON a.course_id = c.id " +
                 "WHERE s.fname = '" + fname + "' AND s.lname = '" + lname + "';";
 
+        resp.setContentType("text/html");
+        PrintWriter out = resp.getWriter();
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:13306/gritacademy",
@@ -124,31 +140,29 @@ public class StudentServlet extends HttpServlet {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
-            while (rs.next()) {
-                course = rs.getString("course_name");
+            if (rs.next()) {
+                while (rs.next()) {
+                    course = rs.getString("course_name");
+                    courseTable +=
+                            "<tr>" +
+                                    "<td>" + fname + "</td>" +
+                                    "<td>" + lname + "</td>" +
+                                    "<td>" + course + "</td>" +
+                                    "</tr>";
 
-                courseTable +=
-                        "<tr>" +
-                        "<td>" + fname + "</td>" +
-                        "<td>" + lname + "</td>" +
-                        "<td>" + course + "</td>" +
-                        "</tr>";
+                    System.out.println(fname + " " + lname);
+                    System.out.println(rs.getString("course_name"));
+                }
 
-                System.out.println(fname + " " + lname);
-                System.out.println(rs.getString("course_name"));
-            }
+                courseTable += "</table></div><br>"; // Close table
+                out.println(htmlTop + courseTable + backButton + htmlBottom);
 
-            courseTable += "</table><br>"; // Close table
+            } else
+                out.println(htmlTop + "No student found, please try again!<br>" + backButton + htmlBottom);
 
             con.close();
         } catch (Exception e) {
             System.out.println(e);
         }
-
-        resp.setContentType("text/html");
-        PrintWriter out = resp.getWriter();
-
-        out.println(htmlTop + courseTable + backButton + htmlBottom);
-
     }
 }

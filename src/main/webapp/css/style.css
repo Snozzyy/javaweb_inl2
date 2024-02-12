@@ -1,0 +1,40 @@
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    margin: 10px;
+    table-layout: auto;
+    width: 33%;
+    text-align: center;
+}
+
+nav {
+    text-align: center;
+    background-color: red;
+    margin-bottom: 10px;
+    height: 35px;
+    padding: 15px;
+    font-family: 'Bebas Neue', sans-serif;
+}
+
+a {
+    padding: 20px;
+    color: black;
+    text-decoration: none;
+}
+
+body {
+    margin: 0px;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 26px;
+}
+
+.tables {
+    justify-content: center;
+    display: flex;
+    box-sizing: border-box;
+}
+
+#active {
+    text-decoration: underline;
+}
