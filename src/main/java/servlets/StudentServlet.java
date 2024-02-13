@@ -57,8 +57,8 @@ public class StudentServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:13306/gritacademy",
-                    "user", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/gritacademy",
+                    "user", "user");
 
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM students;");
@@ -134,13 +134,13 @@ public class StudentServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:13306/gritacademy",
-                    "user", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/gritacademy",
+                    "user", "user");
 
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
-            if (rs.next()) {
+            if (rs.isBeforeFirst()) {
                 while (rs.next()) {
                     course = rs.getString("course_name");
                     courseTable +=
@@ -157,12 +157,14 @@ public class StudentServlet extends HttpServlet {
                 courseTable += "</table></div><br>"; // Close table
                 out.println(htmlTop + courseTable + backButton + htmlBottom);
 
-            } else
-                out.println(htmlTop + "No student found, please try again!<br>" + backButton + htmlBottom);
+            } else {
+                String errorMessage = "User does not exist or is assigned to a course<br>";
+                out.println(htmlTop + errorMessage + backButton + htmlBottom);
+            }
 
             con.close();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Student is not found or is not assigned to a course");
         }
     }
 }

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 @WebServlet(name = "CreateCourse", urlPatterns = "/createcourse")
@@ -38,6 +39,9 @@ public class CreateCourseServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String courseName;
+        String yhp;
+        String desc;
         String htmlForm =
                 "<form action=\"/createcourse\" method=\"post\">" +
                 "<lablel for=\"cname\">Course name:<label><br>" +
@@ -49,10 +53,47 @@ public class CreateCourseServlet extends HttpServlet {
                 "<input type=\"submit\" value=\"Submit\">" +
                 "</form>";
 
+        String coursesTable =
+                "<div class=\"tables\">" +
+                "<table>" + // Table part of html-code
+                "<tr>" +
+                "<th>Course name</th>" +
+                "<th>YHP</th>" +
+                "<th>Description</th>" +
+                "</tr>";
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/gritacademy",
+                    "user", "user");
+
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT name, yhp, description FROM courses;");
+
+            while (rs.next()) {
+                courseName = rs.getString("name");
+                yhp = rs.getString("yhp");
+                desc = rs.getString("description");
+
+                coursesTable += // Dynamically add data to table
+                        "<tr>" +
+                        "<td>" + courseName + "</td>" +
+                        "<td>" + yhp + "</td>" +
+                        "<td>" + desc + "</td>" +
+                        "</tr>";
+            }
+
+            coursesTable += "</table><br></div>";
+
+            con.close();
+        } catch (Exception e) {
+            System.out.println("Course with same name already exists");
+        }
+
         resp.setContentType("text/html");
         PrintWriter out = resp.getWriter();
 
-        out.println(htmlTop + htmlForm + htmlBottom);
+        out.println(htmlTop + coursesTable + htmlForm + htmlBottom);
     }
 
     @Override
@@ -61,23 +102,31 @@ public class CreateCourseServlet extends HttpServlet {
         String yhp = req.getParameter("yhp");
         String desc = req.getParameter("desc");
 
+        resp.setContentType("text/html");
+        PrintWriter out = resp.getWriter();
+
         String sql = String.format("INSERT INTO courses (name, yhp, description) VALUES ('%s', %s, '%s');",
                 cname, yhp, desc);
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:13306/gritacademy",
-                    "root", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/gritacademy",
+                    "inserter", "inserter");
 
             Statement stmt = con.createStatement();
             stmt.executeUpdate(sql);
 
             con.close();
+            resp.sendRedirect("/createcourse");
 
         } catch (Exception e) {
-            System.out.println(e);
-        }
+            String errorMessage = "Course with same name already exist<br>";
+            String backButton =
+                    "<a href=\"/createcourse\">" +
+                    "<button>Go back</button>" +
+                    "</a>";
 
-        resp.sendRedirect("/createcourse");
+            out.println(htmlTop + errorMessage +  backButton + htmlBottom);
+        }
     }
 }
