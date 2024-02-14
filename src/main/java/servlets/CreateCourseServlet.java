@@ -64,8 +64,8 @@ public class CreateCourseServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:13306/gritacademy",
-                    "root", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/gritacademy",
+                    "user", "user");
 
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT name, yhp, description FROM courses;");
@@ -110,8 +110,8 @@ public class CreateCourseServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:13306/gritacademy",
-                    "root", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/gritacademy",
+                    "inserter", "inserter");
 
             Statement stmt = con.createStatement();
             stmt.executeUpdate(sql);

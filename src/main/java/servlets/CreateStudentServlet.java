@@ -69,8 +69,8 @@ public class CreateStudentServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:13306/gritacademy",
-                    "root", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/gritacademy",
+                    "inserter", "inserter");
 
             Statement stmt = con.createStatement();
             int rows = stmt.executeUpdate(sql);
