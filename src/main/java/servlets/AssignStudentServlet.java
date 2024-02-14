@@ -78,8 +78,8 @@ public class AssignStudentServlet extends HttpServlet {
         // Populate student-table
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/gritacademy",
-                    "user", "user");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:13306/gritacademy",
+                    "root", "");
 
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT fname, lname, city, interests FROM students;");
@@ -109,8 +109,8 @@ public class AssignStudentServlet extends HttpServlet {
         // Populate course-table
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/gritacademy",
-                    "user", "user");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:13306/gritacademy",
+                    "root", "");
 
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT name, yhp, description FROM courses;");
@@ -156,8 +156,8 @@ public class AssignStudentServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/gritacademy",
-                    "inserter", "inserter");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:13306/gritacademy",
+                    "root", "");
 
             Statement stmt = con.createStatement();
             stmt.executeUpdate(sql);
